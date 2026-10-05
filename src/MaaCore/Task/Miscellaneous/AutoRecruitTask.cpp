@@ -7,6 +7,7 @@
 #include "Task/ProcessTask.h"
 #include "Task/ReportDataTask.h"
 #include "Utils/Logger.hpp"
+#include "Vision/Miscellaneous/PipelineAnalyzer.h"
 #include "Vision/Miscellaneous/RecruitImageAnalyzer.h"
 #include "Vision/MultiMatcher.h"
 #include "Vision/OCRer.h"
@@ -645,7 +646,9 @@ asst::AutoRecruitTask::calc_task_result_type asst::AutoRecruitTask::recruit_calc
                 return {};
             }
 
-            refresh();
+            if (!refresh()) {
+                return {};
+            }
 
             ++refresh_count;
 
@@ -863,8 +866,40 @@ bool asst::AutoRecruitTask::confirm()
 
 bool asst::AutoRecruitTask::refresh()
 {
+    LogTraceFunction;
+
     ProcessTask refresh_task(*this, { "RecruitRefresh" });
-    return refresh_task.run();
+    if (!refresh_task.run() || need_exit() || !refresh_task.get_enable() ||
+        refresh_task.get_last_task_name() != "RecruitRefreshConfirmSucceeded") {
+        LogError << "Recruit refresh did not complete, last task:" << refresh_task.get_last_task_name();
+        return false;
+    }
+
+    // Verify fresh images after the settling delay; retry recognition without clicking refresh again.
+    static constexpr int VerifyAttempts = 3;
+    for (int retry = 0; retry < VerifyAttempts; ++retry) {
+        if (need_exit() || (retry != 0 && !sleep(Config.get_options().task_delay))) {
+            return false;
+        }
+
+        const auto image = ctrler()->get_image();
+        PipelineAnalyzer pending_analyzer(image);
+        pending_analyzer.set_tasks(
+            { "RecruitRefreshConfirm@LoadingText", "Recruit@OfflineConfirm", "RecruitRefreshConfirm" });
+        if (auto pending = pending_analyzer.analyze()) {
+            LogError << "Recruit refresh is still pending:" << pending->task_ptr->name;
+            return false;
+        }
+
+        RecruitImageAnalyzer recruit_analyzer(image);
+        if (recruit_analyzer.analyze() &&
+            recruit_analyzer.get_tags_result().size() == RecruitConfig::CorrectNumberOfTags) {
+            return !need_exit();
+        }
+    }
+
+    LogError << "Recruit tags page was not recognized after refresh";
+    return false;
 }
 
 bool asst::AutoRecruitTask::hire_all(const cv::Mat& image)

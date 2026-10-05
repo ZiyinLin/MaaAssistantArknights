@@ -2452,7 +2452,44 @@
         "roi": [630, 400, 650, 160],
         "preDelay": 500,
         "postDelay": 500,
-        "next": ["RecruitRefreshConfirm@LoadingText", "Recruit@OfflineConfirm", "SleepThenStop"]
+        "maxTimes": 4,
+        "reduceOtherTimes": ["RecruitRefreshConfirmObserve*2"],
+        "next": [
+            "RecruitRefreshConfirm@LoadingText",
+            "Recruit@OfflineConfirm",
+            "RecruitRefreshConfirmObserve",
+            "RecruitRefreshConfirmSucceeded"
+        ],
+        "exceededNext": ["RecruitRefreshConfirmExceeded"]
+    },
+    "RecruitRefreshConfirmObserve": {
+        "Doc": "确认按钮持续存在时先观察，再重试点击；每次点击重置观察次数，最多点击四次。",
+        "baseTask": "RecruitRefreshConfirm",
+        "template": "PopupConfirm.png",
+        "action": "DoNothing",
+        "preDelay": 0,
+        "postDelay": 0,
+        "maxTimes": 2,
+        "reduceOtherTimes": [],
+        "next": [
+            "RecruitRefreshConfirm@LoadingText",
+            "Recruit@OfflineConfirm",
+            "RecruitRefreshConfirmObserve",
+            "RecruitRefreshConfirmSucceeded"
+        ],
+        "exceededNext": [
+            "RecruitRefreshConfirm@LoadingText",
+            "Recruit@OfflineConfirm",
+            "RecruitRefreshConfirm",
+            "RecruitRefreshConfirmSucceeded"
+        ]
+    },
+    "RecruitRefreshConfirmSucceeded": {
+        "algorithm": "JustReturn",
+        "postDelay": 2000
+    },
+    "RecruitRefreshConfirmExceeded": {
+        "algorithm": "JustReturn"
     },
     "SleepThenStop": {
         "algorithm": "JustReturn",
