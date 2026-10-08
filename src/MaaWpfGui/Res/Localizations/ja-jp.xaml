@@ -1741,6 +1741,7 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Battles">第1層は通常作戦を優先</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Hidden">第1層は未知の怪奇をできるだけ探索</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Expedition">第2層は一足先にを優先</system:String>
+    <system:String x:Key="BlackFlowMilestoneEnding1Floor1ScrapShop">第1層は通りがかりに秘境の行商人で取引</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2ScrapShop">第2層は秘境の行商人を優先</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Hidden">第2層は未知の怪奇をできるだけ探索</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Employ">第2層は道中で応急支援に立ち寄る</system:String>

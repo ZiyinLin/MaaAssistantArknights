@@ -199,11 +199,7 @@ void BlackFlowScrapTradeTaskPlugin::decide()
             continue;
         }
         case Phase::Prepare:
-            // 非兑现店卖出闲置自然物只为交易筹钱，没有增长物时不卖。
-            if (!m_counted || (!m_liquidating && m_ledger.growth(BlackFlowScrapMarket) <= 1)) {
-                m_phase = Phase::Trade;
-                continue;
-            }
+            // 交易前先卖出卖表内不随零件增长的自然物换钱；计数不完整时按名称逐件查找。
             if (switch_tab(true, selling) || sell_matching(false)) {
                 return;
             }

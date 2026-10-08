@@ -1738,6 +1738,7 @@ Right-click to clear inactive jobs</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Battles">Prioritize battle nodes on floor 1</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Hidden">Explore hide invisible nodes on floor 1</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Expedition">Prioritize expedition on floor 2</system:String>
+    <system:String x:Key="BlackFlowMilestoneEnding1Floor1ScrapShop">Trade at the scrap shop on floor 1 when passing by</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2ScrapShop">Prioritize the scrap shop on floor 2</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Hidden">Explore hide invisible nodes on floor 2</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Employ">Visit employ on floor 2 along the way</system:String>

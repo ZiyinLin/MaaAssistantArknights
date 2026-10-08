@@ -1740,6 +1740,7 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Battles">1구역은 작전 우선</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor1Hidden">1구역은 미지의 괴이를 최대한 탐색</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Expedition">2구역은 앞서 출발 우선</system:String>
+    <system:String x:Key="BlackFlowMilestoneEnding1Floor1ScrapShop">1구역은 지나가는 길에 신비한 상인과 거래</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2ScrapShop">2구역은 신비한 상인 우선</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Hidden">2구역은 미지의 괴이를 최대한 탐색</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding1Floor2Employ">2구역은 가는 길에 응급 조력 경유</system:String>
