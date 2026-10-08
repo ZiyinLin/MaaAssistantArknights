@@ -1759,7 +1759,7 @@ Right-click to clear inactive jobs</system:String>
     <system:String x:Key="BlackFlowMilestoneBabyExploreHidden">Reveal as many unknown nodes as possible until a scrap trader is found</system:String>
     <system:String x:Key="BlackFlowMilestoneBabyVisitIncident">Visit an Encounter along the way</system:String>
     <system:String x:Key="BlackFlowMilestoneBabyFloor2Shops">Continue collecting seeds when visiting a Rogue Trader on floor 2</system:String>
-    <system:String x:Key="BlackFlowMilestoneBabyFloor3Shops">Sell items, refresh stock, and collect seeds when visiting a normal shop on floor 3</system:String>
+    <system:String x:Key="BlackFlowMilestoneBabyFloor3Shops">Continue collecting seeds when visiting a Rogue Trader on floor 3</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding2SandtableA">Obtain Sandtable A</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding2SandtableB">Obtain Sandtable B</system:String>
     <system:String x:Key="BlackFlowMilestoneEnding2Fate">Enter the fated destination on floor 5 and complete Ending 2</system:String>
