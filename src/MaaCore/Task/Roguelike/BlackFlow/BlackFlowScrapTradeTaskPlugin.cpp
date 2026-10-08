@@ -142,7 +142,7 @@ void BlackFlowScrapTradeTaskPlugin::decide()
 {
     if (!BlackFlowScrapMarket.available()) {
         LogWarn << __FUNCTION__ << "BlackFlow scrap market is unavailable";
-        leave();
+        abort_trade("market_unavailable");
         return;
     }
 
@@ -173,7 +173,7 @@ void BlackFlowScrapTradeTaskPlugin::decide()
             const auto held = m_inventory.survey(*this, m_inventory_names, &error);
             if (!held && !error.empty()) {
                 LogWarn << "BlackFlow scrap trade inventory incomplete" << error;
-                leave();
+                abort_trade("inventory_incomplete");
                 return;
             }
             m_counted = held.has_value();
@@ -249,7 +249,7 @@ bool BlackFlowScrapTradeTaskPlugin::switch_tab(bool want_selling, bool selling)
     }
     if (++m_toggle_attempts > ScrapTradeMaxToggleAttempts) {
         LogWarn << __FUNCTION__ << "BlackFlow scrap trade cannot switch page" << "want selling" << want_selling;
-        leave();
+        abort_trade("page_switch_failed");
         return true;
     }
     m_inventory.forget_position();
@@ -274,7 +274,7 @@ bool BlackFlowScrapTradeTaskPlugin::sell_matching(bool liquidating)
     if (!item) {
         if (!error.empty()) {
             LogWarn << "BlackFlow scrap trade sale search failed" << error;
-            leave();
+            abort_trade("sale_search_failed");
             return true;
         }
         return false;
@@ -293,7 +293,7 @@ bool BlackFlowScrapTradeTaskPlugin::sell_back()
     if (!target) {
         if (!error.empty()) {
             LogWarn << "BlackFlow scrap trade sell-back search failed" << name << error;
-            leave();
+            abort_trade("sell_back_search_failed", name);
             return true;
         }
         // 已完整查找仍找不到时，沿用放弃卖回这一件的处理。
@@ -409,6 +409,19 @@ void BlackFlowScrapTradeTaskPlugin::leave()
     set_action(ScrapTradeLeaveEntry);
 }
 
+void BlackFlowScrapTradeTaskPlugin::abort_trade(std::string_view reason, const std::string& item)
+{
+    if (!need_exit()) {
+        auto info = basic_info_with_what("BlackFlowScrapTradeAborted");
+        info["details"] = json::object {
+            { "reason", std::string(reason) },
+            { "item", item },
+        };
+        callback(AsstMsg::SubTaskExtraInfo, info);
+    }
+    leave();
+}
+
 void BlackFlowScrapTradeTaskPlugin::on_purchase_confirmed()
 {
     if (!m_pending_purchase) {
@@ -461,7 +474,7 @@ bool BlackFlowScrapTradeTaskPlugin::complete_sale(const ScrapTradeInventoryTarge
     std::string error;
     if (!m_inventory.sell(*this, target, &error)) {
         LogWarn << "BlackFlow scrap trade sale failed" << target.text.text << error;
-        leave();
+        abort_trade("sale_failed", target.text.text);
         return true;
     }
     m_ledger.record_sale(target.text.text);

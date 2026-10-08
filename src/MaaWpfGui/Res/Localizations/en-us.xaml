@@ -1685,6 +1685,13 @@ Right-click to clear inactive jobs</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupDiscarded">已丢弃零件：{0}</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupCompleted">零件箱清理完成</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupFailed">零件箱清理失败</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedMarketUnavailable">Scrap trader item data is unavailable; skipping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedInventoryIncomplete">Could not count holdings at the scrap trader; stopping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedPageSwitchFailed">Could not switch between the buy and sell pages at the scrap trader; stopping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleSearchFailed">Could not search the sell list at the scrap trader; stopping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSellBackSearchFailed">Could not find "{0}" to sell back at the scrap trader; stopping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleFailed">Selling "{0}" at the scrap trader was not confirmed; stopping the trade and leaving</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedUnknown">The scrap trader trade ran into an error; stopping the trade and leaving</system:String>
     <system:String x:Key="BlackFlowStrategyUnknown">Unknown strategy</system:String>
     <system:String x:Key="BlackFlowDecisionProbeUnknownNode">Probe the nearest unclassified node on the route</system:String>
     <system:String x:Key="BlackFlowDecisionPolicyOrder">Selected by the configured policy order</system:String>

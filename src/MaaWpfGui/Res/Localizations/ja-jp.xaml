@@ -1688,6 +1688,13 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowInventoryCleanupDiscarded">已丢弃零件：{0}</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupCompleted">零件箱清理完成</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupFailed">零件箱清理失败</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedMarketUnavailable">秘境の行商人のアイテムデータが利用できないため、取引せずに退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedInventoryIncomplete">秘境の行商人で所持品の確認に失敗したため、取引を中止して退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedPageSwitchFailed">秘境の行商人で購入・売却ページを切り替えられなかったため、取引を中止して退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleSearchFailed">秘境の行商人で売却リストを検索できなかったため、取引を中止して退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSellBackSearchFailed">秘境の行商人で買い戻し分の「{0}」が見つからないため、取引を中止して退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleFailed">秘境の行商人で「{0}」の売却が確認できなかったため、取引を中止して退店します</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedUnknown">秘境の行商人の取引で異常が発生したため、取引を中止して退店します</system:String>
     <system:String x:Key="BlackFlowStrategyUnknown">不明な戦略</system:String>
     <system:String x:Key="BlackFlowDecisionProbeUnknownNode">経路上で最も近い未分類ノードを調査</system:String>
     <system:String x:Key="BlackFlowDecisionPolicyOrder">戦略で設定された優先順位で選択</system:String>

@@ -67,6 +67,8 @@ private:
     void click_at_most();
     [[nodiscard]] bool refresh(int wallet);
     void leave();
+    // 交易无法继续时上报原因再离店；用户停止任务时只离店。
+    void abort_trade(std::string_view reason, const std::string& item = {});
 
     [[nodiscard]] bool on_selling_page(const cv::Mat& image) const;
     [[nodiscard]] std::vector<TextRect> recognize(const cv::Mat& image, const std::vector<std::string>& names) const;

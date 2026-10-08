@@ -1687,6 +1687,13 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowInventoryCleanupDiscarded">已丢弃零件：{0}</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupCompleted">零件箱清理完成</system:String>
     <system:String x:Key="BlackFlowInventoryCleanupFailed">零件箱清理失败</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedMarketUnavailable">신비한 상인의 아이템 데이터를 사용할 수 없어 거래하지 않고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedInventoryIncomplete">신비한 상인에서 보유품 확인에 실패해 거래를 중단하고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedPageSwitchFailed">신비한 상인에서 구매·판매 페이지 전환에 실패해 거래를 중단하고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleSearchFailed">신비한 상인에서 판매 목록 검색에 실패해 거래를 중단하고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSellBackSearchFailed">신비한 상인에서 되팔 「{0}」을(를) 찾지 못해 거래를 중단하고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedSaleFailed">신비한 상인에서 「{0}」 판매가 확인되지 않아 거래를 중단하고 나갑니다</system:String>
+    <system:String x:Key="BlackFlowScrapTradeAbortedUnknown">신비한 상인 거래에 이상이 발생해 거래를 중단하고 나갑니다</system:String>
     <system:String x:Key="BlackFlowStrategyUnknown">알 수 없는 전략</system:String>
     <system:String x:Key="BlackFlowDecisionProbeUnknownNode">경로상 가장 가까운 미분류 노드 탐색</system:String>
     <system:String x:Key="BlackFlowDecisionPolicyOrder">전략에 설정된 우선순위대로 선택</system:String>
