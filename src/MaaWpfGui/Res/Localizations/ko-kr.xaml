@@ -1697,7 +1697,7 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowNodeEmpty">빈 노드</system:String>
     <system:String x:Key="BlackFlowNodeCombat">일반 작전</system:String>
     <system:String x:Key="BlackFlowNodeEmergencyCombat">긴급 작전</system:String>
-    <system:String x:Key="BlackFlowNodeBoss">험로의 난적</system:String>
+    <system:String x:Key="BlackFlowNodeBoss">험난한 길</system:String>
     <system:String x:Key="BlackFlowNodeBattleShop">교활한 상인</system:String>
     <system:String x:Key="BlackFlowNodeScrapShop">신비한 상인</system:String>
     <system:String x:Key="BlackFlowNodeEncounter">우연한 만남</system:String>
@@ -1706,7 +1706,7 @@ C:\leidian\LDPlayer9
     <system:String x:Key="BlackFlowNodeScout">앞서 출발</system:String>
     <system:String x:Key="BlackFlowNodeDuel">외나무다리</system:String>
     <system:String x:Key="BlackFlowNodeEmergencyAid">응급 조력</system:String>
-    <system:String x:Key="BlackFlowNodeRest">휴식 노드</system:String>
+    <system:String x:Key="BlackFlowNodeRest">안전가옥</system:String>
     <system:String x:Key="BlackFlowNodeFeatherPoint">깃털 조망점</system:String>
     <system:String x:Key="BlackFlowNodeWindingPassage">굽이진 비밀 통로</system:String>
     <system:String x:Key="BlackFlowNodeSacrifice">봉헌 노드</system:String>
