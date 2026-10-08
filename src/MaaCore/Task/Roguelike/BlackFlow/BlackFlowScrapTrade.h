@@ -14,7 +14,8 @@ namespace asst::blackflow
 class ScrapLedger
 {
 public:
-    void reset(const std::vector<std::string>& held_names);
+    // 计数不完整时，未识别的格子可能是加工品，按加工品计入保留上限。
+    void reset(const std::vector<std::string>& held_names, int unrecognized = 0);
     void record_purchase(const ScrapItem& item);
     void record_sale(const std::string& name);
 
@@ -30,6 +31,7 @@ public:
 private:
     std::unordered_map<std::string, int> m_entry;
     std::unordered_map<std::string, int> m_held;
+    int m_unrecognized = 0;
 };
 
 // 用途购买是否需要这件加工品：持有数未到上限，且它不限形状，或能补上缺少的形状。

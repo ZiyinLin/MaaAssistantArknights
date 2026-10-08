@@ -63,12 +63,15 @@ public:
 class BlackFlowScrapTradeInventory final
 {
 public:
-    // 完整计数时返回数量并逐格回调；位置歧义返回空值，识别或操作失败另写入 error。
+    // 完整计数时返回数量并逐格回调；位置歧义或有格子未识别时返回空值，识别或操作失败另写入 error。
     [[nodiscard]] std::optional<std::vector<std::string>>
         survey(BlackFlowScrapTradeInventoryContext& context, const std::vector<std::string>& names, std::string* error);
 
     // 位置有歧义时保留各段已经识别的物品；不同段的同名计数取最大值。
     [[nodiscard]] const std::vector<std::string>& observed_items() const noexcept { return m_observed; }
+
+    // 计数不完整时，识别不出名称的格子数。
+    [[nodiscard]] int unrecognized_slots() const noexcept { return m_unrecognized; }
 
     // 复用位置模型；有歧义后持续按名称查找，新增物品后再尝试重建。
     [[nodiscard]] std::optional<ScrapTradeInventoryTarget> find(
@@ -123,6 +126,7 @@ private:
     ScrapTradeInventoryModel m_model;
     LocationMode m_mode = LocationMode::Unknown;
     std::vector<std::string> m_observed;
+    int m_unrecognized = 0;
     std::optional<int> m_offset;
 };
 } // namespace asst::blackflow

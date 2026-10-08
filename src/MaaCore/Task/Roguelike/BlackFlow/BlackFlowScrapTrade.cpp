@@ -7,13 +7,14 @@
 
 namespace asst::blackflow
 {
-void ScrapLedger::reset(const std::vector<std::string>& held_names)
+void ScrapLedger::reset(const std::vector<std::string>& held_names, int unrecognized)
 {
     m_entry.clear();
     for (const auto& name : held_names) {
         ++m_entry[name];
     }
     m_held = m_entry;
+    m_unrecognized = unrecognized;
 }
 
 void ScrapLedger::record_purchase(const ScrapItem& item)
@@ -59,7 +60,7 @@ bool ScrapLedger::may_sell(const ScrapItem& item, const std::unordered_set<std::
 
 int ScrapLedger::held_in(ScrapCategory category, const BlackFlowScrapMarketConfig& market) const
 {
-    int total = 0;
+    int total = category == ScrapCategory::Processing ? m_unrecognized : 0;
     for (const auto& [name, count] : m_held) {
         if (const auto item = market.find(name); item && item->get().category == category) {
             total += count;

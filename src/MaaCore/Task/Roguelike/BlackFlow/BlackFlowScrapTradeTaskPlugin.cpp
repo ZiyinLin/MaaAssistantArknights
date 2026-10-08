@@ -183,7 +183,7 @@ void BlackFlowScrapTradeTaskPlugin::decide()
                         << m_ledger.growth(BlackFlowScrapMarket);
             }
             else {
-                // 重复自然物的段间数量不用于倒转；加工品沿已识别的连续段计数并补缺。
+                // 重复自然物的段间数量不用于倒转；加工品按已识别的名称计数并补缺，未识别的格子计入保留上限。
                 std::vector<std::string> processing;
                 for (const auto& name : m_inventory.observed_items()) {
                     const auto item = BlackFlowScrapMarket.find(name);
@@ -191,8 +191,9 @@ void BlackFlowScrapTradeTaskPlugin::decide()
                         processing.emplace_back(name);
                     }
                 }
-                m_ledger.reset(processing);
-                LogInfo << "BlackFlow scrap trade processing holdings" << processing;
+                m_ledger.reset(processing, m_inventory.unrecognized_slots());
+                LogInfo << "BlackFlow scrap trade processing holdings" << processing << "unrecognized"
+                        << m_inventory.unrecognized_slots();
             }
             m_phase = Phase::Prepare;
             continue;

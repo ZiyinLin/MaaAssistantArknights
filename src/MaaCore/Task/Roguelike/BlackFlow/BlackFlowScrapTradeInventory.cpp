@@ -62,6 +62,7 @@ void BlackFlowScrapTradeInventory::invalidate()
     m_model.reset({});
     m_mode = LocationMode::Unknown;
     m_observed.clear();
+    m_unrecognized = 0;
     forget_position();
 }
 
@@ -254,28 +255,27 @@ std::optional<std::vector<std::string>> BlackFlowScrapTradeInventory::survey(
     std::map<std::string, int> observed;
     const auto save_segment = [&] {
         std::map<std::string, int> counts;
+        // 段内跳过的格子没有识别出名称，记为未识别物品，不同段取最大值。
         int expected = indexed ? 1 : cells.begin()->first.first * Columns + cells.begin()->first.second;
+        int gaps = 0;
         for (const auto& [slot, name] : cells) {
-            if (slot.first * Columns + slot.second != expected++) {
-                set_error(error, "scrap trade inventory contains an unrecognized slot");
-                return false;
-            }
+            const int index = slot.first * Columns + slot.second;
+            gaps += index - expected;
+            expected = index + 1;
             ++counts[name];
         }
+        m_unrecognized = std::max(m_unrecognized, gaps);
         for (const auto& [name, count] : counts) {
             observed[name] = std::max(observed[name], count);
         }
-        return true;
     };
     const auto use_names = [&] {
-        if (!save_segment()) {
-            return;
-        }
+        save_segment();
         for (const auto& [name, count] : observed) {
             m_observed.insert(m_observed.end(), static_cast<std::size_t>(count), name);
         }
         m_mode = LocationMode::ByName;
-        LogWarn << "BlackFlow scrap inventory position ambiguous, using names";
+        LogWarn << "BlackFlow scrap inventory count incomplete, using names" << "unrecognized" << m_unrecognized;
     };
     int offset = indexed ? 0 : FirstRowY - std::ranges::min(*view, {}, &VisibleItem::center_y).center_y;
     int stationary = 0;
@@ -306,12 +306,12 @@ std::optional<std::vector<std::string>> BlackFlowScrapTradeInventory::survey(
                 use_names();
                 return std::nullopt;
             }
-            // 首格由园圃占用，其余格子按行连续；有空洞说明完整计数尚未建立。
+            // 首格由园圃占用，其余格子按行连续；有空洞说明有名称没有识别出来，不能建立完整计数，改按名称查找。
             int expected = 1;
             std::vector<std::string> held;
             for (const auto& [slot, name] : cells) {
                 if (slot.first * Columns + slot.second != expected++) {
-                    set_error(error, "scrap trade inventory contains an unrecognized slot");
+                    use_names();
                     return std::nullopt;
                 }
                 held.emplace_back(name);
@@ -338,9 +338,7 @@ std::optional<std::vector<std::string>> BlackFlowScrapTradeInventory::survey(
         const auto shift = measure_shift(*view, *next);
         if (!shift) {
             // 继续读后面的加工品；不能确定段间重叠时，不累加同名物品数量。
-            if (!save_segment()) {
-                return std::nullopt;
-            }
+            save_segment();
             cells.clear();
             indexed = false;
             stationary = 0;
