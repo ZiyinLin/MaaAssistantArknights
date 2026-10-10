@@ -216,11 +216,17 @@ void BlackFlowScrapTradeTaskPlugin::decide()
                 return;
             }
             {
+                // 策略预留的余额不参与店内消费；卖出到账后下一轮按新余额重算，未卖回的估价不计入。
                 RoguelikeParameterAnalyzer analyzer(image);
                 const int wallet = analyzer.get_number(image, std::string(ScrapTradeWalletTask));
-                if (buy(image, wallet) || refresh(wallet)) {
+                const int reserved = m_session->reserved_amount("ingots");
+                const Funds funds { wallet, reserved, std::max(0, wallet - reserved) };
+                std::vector<std::string> skipped;
+                if (buy(image, funds, skipped) || refresh(funds)) {
                     return;
                 }
+                LogInfo << __FUNCTION__ << "BlackFlow scrap trade buying finished" << "budget" << funds.budget
+                        << "wallet" << funds.wallet << "reserved" << funds.reserved << "skipped" << skipped;
             }
             m_phase = Phase::Liquidate;
             continue;
@@ -304,7 +310,7 @@ bool BlackFlowScrapTradeTaskPlugin::sell_back()
     return complete_sale(*target, true);
 }
 
-bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, int wallet)
+bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, const Funds& funds, std::vector<std::string>& skipped)
 {
     std::vector<std::string> names;
     for (const auto& item : BlackFlowScrapMarket.items()) {
@@ -327,19 +333,41 @@ bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, int wallet)
 
     // 价格按名称查表，不识别货架价格；已知的价格效果只会降价，因此表价不会让余额不足。
     // 保留购买先于倒转；非兑现店按买表积累玉米和雾滚草，加工品每种每次进店最多补一件。
+    const auto skip_reason = [&](const ScrapItem& item, bool keep_natural) -> std::string_view {
+        if (*item.price > funds.budget) {
+            return "over budget";
+        }
+        if (keep_natural) {
+            return {};
+        }
+        if (m_kept.contains(item.name)) {
+            return "bought this visit";
+        }
+        if (scrap_keep_wanted(item, m_ledger, BlackFlowScrapMarket)) {
+            return {};
+        }
+        if (item.category != ScrapCategory::Processing) {
+            return "not kept here";
+        }
+        return m_ledger.held_in(ScrapCategory::Processing, BlackFlowScrapMarket) >=
+                       BlackFlowScrapMarket.processing_keep_limit()
+                   ? "keep limit reached"
+                   : "shapes covered";
+    };
     const auto& table = m_config->status().shopping_buy_table;
     for (const auto& goods : RoguelikeShopping.get_goods(m_config->get_theme(), table)) {
         const auto offer = std::ranges::find(shelf, goods.name, &TextRect::text);
         const auto item = BlackFlowScrapMarket.find(goods.name);
-        if (offer == shelf.end() || !item || !item->get().price || *item->get().price > wallet) {
+        if (offer == shelf.end() || !item || !item->get().price) {
             continue;
         }
         const bool keep_natural = !m_liquidating && (goods.name == "回声玉米" || goods.name == "雾滚草");
-        if (!keep_natural &&
-            (m_kept.contains(goods.name) || !scrap_keep_wanted(item->get(), m_ledger, BlackFlowScrapMarket))) {
+        if (const auto reason = skip_reason(item->get(), keep_natural); !reason.empty()) {
+            skipped.emplace_back(goods.name + " " + std::string(reason));
             continue;
         }
-        LogInfo << __FUNCTION__ << "BlackFlow scrap trade buys to keep" << goods.name << "wallet" << wallet;
+        LogInfo << __FUNCTION__ << "BlackFlow scrap trade buys to keep" << goods.name << "price" << *item->get().price
+                << "budget" << funds.budget << "wallet" << funds.wallet << "reserved" << funds.reserved;
         ctrler()->click(offer->rect);
         m_pending_purchase = PendingPurchase { offer->text, offer->rect, true };
         set_action(ScrapTradeBuyConfirmEntry);
@@ -355,7 +383,7 @@ bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, int wallet)
     int best_net = 0;
     for (const auto& offer : shelf) {
         const auto item = BlackFlowScrapMarket.find(offer.text);
-        if (!item || !item->get().price || *item->get().price > wallet) {
+        if (!item || !item->get().price || *item->get().price > funds.budget) {
             continue;
         }
         const auto net = scrap_trade_net(item->get(), growth, BlackFlowScrapMarket);
@@ -368,14 +396,14 @@ bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, int wallet)
         return false;
     }
     LogInfo << __FUNCTION__ << "BlackFlow scrap trade buys" << best->text << "net" << best_net << "growth" << growth
-            << "wallet" << wallet;
+            << "budget" << funds.budget << "wallet" << funds.wallet << "reserved" << funds.reserved;
     ctrler()->click(best->rect);
     m_pending_purchase = PendingPurchase { best->text, best->rect, false };
     set_action(ScrapTradeBuyConfirmEntry);
     return true;
 }
 
-bool BlackFlowScrapTradeTaskPlugin::refresh(int wallet)
+bool BlackFlowScrapTradeTaskPlugin::refresh(const Funds& funds)
 {
     const auto& costs = BlackFlowScrapMarket.refresh_costs();
     // 非兑现店只交易首页，攒下的估价留到兑现店卖出。
@@ -391,9 +419,10 @@ bool BlackFlowScrapTradeTaskPlugin::refresh(int wallet)
     const int growth = m_ledger.growth(BlackFlowScrapMarket);
     const double expected = expected_scrap_page_profit(*type, growth, BlackFlowScrapMarket);
     const auto cheapest = cheapest_profitable_price(*type, growth, BlackFlowScrapMarket);
-    const bool worth = cheapest && expected > cost && wallet >= cost + *cheapest;
+    const bool worth = cheapest && expected > cost && funds.budget >= cost + *cheapest;
     LogInfo << __FUNCTION__ << "BlackFlow scrap trade refresh" << "worth" << worth << "expected" << expected << "cost"
-            << cost << "wallet" << wallet << "growth" << growth;
+            << cost << "growth" << growth << "budget" << funds.budget << "wallet" << funds.wallet << "reserved"
+            << funds.reserved;
     if (!worth) {
         return false;
     }

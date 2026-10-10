@@ -1698,6 +1698,48 @@
                     "on_selected": { "sandtable_a": true }
                 }
             ],
+            "reserves": [
+                {
+                    "id": "ending2_single_sandtable_ingots",
+                    "description": "只有一张沙盘时，命运所指要付 50 源石锭，秘境行商交易不动这部分余额",
+                    "resource": "ingots",
+                    "minimum": 50,
+                    "active_if": {
+                        "all": [
+                            {
+                                "any": [
+                                    {
+                                        "fact": "sandtable_a",
+                                        "op": "eq",
+                                        "value": true
+                                    },
+                                    {
+                                        "fact": "sandtable_b",
+                                        "op": "eq",
+                                        "value": true
+                                    }
+                                ]
+                            },
+                            {
+                                "not": {
+                                    "all": [
+                                        {
+                                            "fact": "sandtable_a",
+                                            "op": "eq",
+                                            "value": true
+                                        },
+                                        {
+                                            "fact": "sandtable_b",
+                                            "op": "eq",
+                                            "value": true
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
             "milestones": [
                 {
                     "id": "ending2_sandtable_a",
