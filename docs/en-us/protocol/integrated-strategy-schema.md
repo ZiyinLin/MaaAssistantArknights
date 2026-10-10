@@ -706,9 +706,10 @@ Besides `priority`, `shopping.json` can declare named buy tables and sell tables
 }
 ```
 
-Named tables, the checks below, and `price` currently apply only to BlackFlow; other themes keep reading only `priority`, ignore `price`, and do not read the shop balance.
+Named tables, `price`, and the balance pre-check while shopping currently apply only to BlackFlow; other themes keep reading `priority` with their original parsing rules.
 
-For BlackFlow, item names must not be empty, and `roles` only accepts the uppercase class names above; any invalid item makes the whole file fail to parse.
+In every theme, `roles` only accepts the uppercase class names above. BlackFlow additionally requires item names to be non-empty and `roles` and `chars` to be string arrays.
+Any invalid item makes the whole file fail to parse.
 An empty buy table means there are no purchase candidates, and an empty sell table means nothing is sold.
 
 A BlackFlow item can set a positive integer `price`. When the shop balance can be read, items the balance cannot afford are skipped and the next item is checked; without `price` the behavior is unchanged.
@@ -733,7 +734,7 @@ The BlackFlow strategy module supports `shopping_rules`. When a page is dispatch
 
 If multiple rules match, the rule with the lowest `rank` is selected; ties are resolved by the lexicographical order of `id`, as with `encounter_rules`. Both tables come from the same rule; fields from different rules are not combined. If no rule matches, the `default` buy table is used and nothing is sold. Tables are selected again for every page dispatch, so the previous page's selection is not carried over.
 
-`when` cannot access candidate route facts. Referenced table names must exist in BlackFlow's `shopping.json`; otherwise, the strategy configuration fails to parse. The shopping plugin uses the selected buy table, while scrap trader cultivation uses the selected sell table to filter items for sale.
+`when` cannot access candidate route facts. Referenced table names must exist in BlackFlow's `shopping.json`; otherwise, the strategy configuration fails to parse. The shopping plugin uses the selected buy table, while 秘境行商 cultivation uses the selected sell table to filter items for sale.
 
 ## Integrated Strategy Special Mechanisms
 
