@@ -7,14 +7,14 @@
 
 namespace asst::blackflow
 {
-void ScrapLedger::reset(const std::vector<std::string>& held_names, int unrecognized)
+void ScrapLedger::reset(const std::vector<std::string>& held_names, bool exact_counts)
 {
     m_entry.clear();
     for (const auto& name : held_names) {
         ++m_entry[name];
     }
     m_held = m_entry;
-    m_unrecognized = unrecognized;
+    m_exact_counts = exact_counts;
 }
 
 void ScrapLedger::record_purchase(const ScrapItem& item)
@@ -52,7 +52,7 @@ int ScrapLedger::growth(const BlackFlowScrapMarketConfig& market) const
 bool ScrapLedger::may_sell(const ScrapItem& item, const std::unordered_set<std::string>& sell_table) const
 {
     if (item.category == ScrapCategory::Natural && sell_table.contains(item.name)) {
-        return held(item.name) > 0;
+        return !m_exact_counts || held(item.name) > 0;
     }
     const auto entry = m_entry.find(item.name);
     return held(item.name) > (entry == m_entry.end() ? 0 : entry->second);
@@ -60,7 +60,7 @@ bool ScrapLedger::may_sell(const ScrapItem& item, const std::unordered_set<std::
 
 int ScrapLedger::held_in(ScrapCategory category, const BlackFlowScrapMarketConfig& market) const
 {
-    int total = category == ScrapCategory::Processing ? m_unrecognized : 0;
+    int total = 0;
     for (const auto& [name, count] : m_held) {
         if (const auto item = market.find(name); item && item->get().category == category) {
             total += count;

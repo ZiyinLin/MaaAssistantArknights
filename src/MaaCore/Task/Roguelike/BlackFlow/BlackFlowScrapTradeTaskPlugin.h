@@ -99,7 +99,6 @@ private:
     mutable PendingWork m_pending = PendingWork::None;
     Phase m_phase = Phase::Cultivate;
     ScrapLedger m_ledger;
-    bool m_counted = false;
     std::unordered_set<std::string> m_sell_table;
     bool m_liquidating = false;
     std::deque<std::string> m_sell_backs;
