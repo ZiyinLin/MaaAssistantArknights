@@ -1,0 +1,533 @@
+<UserControl
+    x:Class="MaaWpfGui.Views.UserControl.Toolbox.BlackFlowRouteSandboxUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:controls="clr-namespace:MaaWpfGui.Styles.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:s="https://github.com/canton7/Stylet"
+    xmlns:toolbox_vms="clr-namespace:MaaWpfGui.ViewModels.UserControl.Toolbox"
+    d:Background="White"
+    d:DataContext="{d:DesignInstance {x:Type toolbox_vms:BlackFlowRouteSandboxUserControlModel}}"
+    d:DesignHeight="520"
+    d:DesignWidth="760"
+    IsVisibleChanged="UserControl_IsVisibleChanged"
+    s:View.ActionTarget="{Binding}"
+    mc:Ignorable="d">
+    <Grid Margin="10,0,10,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Margin="2,0,2,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    FontWeight="SemiBold"
+                    Text="{DynamicResource BlackFlowRouteSandbox}" />
+                <controls:TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource PrimaryBrush}"
+                    Text="{Binding MapStatus}" />
+            </Grid>
+
+            <Border
+                Grid.Row="1"
+                Padding="6"
+                Background="#18000000"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="5">
+                <Grid
+                    x:Name="MapViewport"
+                    Background="Transparent"
+                    ClipToBounds="True"
+                    LostMouseCapture="MapViewport_LostMouseCapture"
+                    PreviewMouseLeftButtonDown="MapViewport_PreviewMouseLeftButtonDown"
+                    PreviewMouseLeftButtonUp="MapViewport_PreviewMouseLeftButtonUp"
+                    PreviewMouseMove="MapViewport_PreviewMouseMove"
+                    PreviewMouseWheel="MapViewport_PreviewMouseWheel">
+                    <Viewbox
+                        x:Name="MapViewbox"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform"
+                        StretchDirection="Both">
+                        <Viewbox.RenderTransform>
+                            <MatrixTransform x:Name="MapTransform" />
+                        </Viewbox.RenderTransform>
+                    <Grid
+                        Width="{Binding RoiWidth}"
+                        Height="{Binding RoiHeight}"
+                        Background="#16000000">
+                        <Image
+                            Width="{Binding RoiWidth}"
+                            Height="{Binding RoiHeight}"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding MapImage}"
+                            Stretch="Fill" />
+                        <Rectangle
+                            Fill="#33000000"
+                            IsHitTestVisible="False" />
+
+                        <ItemsControl
+                            Panel.ZIndex="1"
+                            Width="{Binding RoiWidth}"
+                            Height="{Binding RoiHeight}"
+                            IsHitTestVisible="False"
+                            ItemsSource="{Binding RouteSegments}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Path
+                                            Data="{Binding Geometry}"
+                                            Visibility="{Binding RouteVisibility}">
+                                            <Path.Style>
+                                                <Style TargetType="{x:Type Path}">
+                                                    <Setter Property="Stroke" Value="{DynamicResource PrimaryBrush}" />
+                                                    <Setter Property="StrokeEndLineCap" Value="Round" />
+                                                    <Setter Property="StrokeStartLineCap" Value="Round" />
+                                                    <Setter Property="StrokeThickness" Value="3" />
+                                                    <Setter Property="Opacity" Value="0.9" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Predicted}" Value="True">
+                                                            <Setter Property="StrokeDashArray" Value="5,3" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsLongRange}" Value="True">
+                                                            <Setter Property="StrokeDashArray" Value="3,3" />
+                                                            <Setter Property="StrokeThickness" Value="2.5" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                            <Setter Property="Opacity" Value="1" />
+                                                            <Setter Property="StrokeThickness" Value="4.5" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                        <Path
+                                            Data="{Binding ArrowGeometry}"
+                                            Fill="{DynamicResource PrimaryBrush}"
+                                            IsHitTestVisible="False"
+                                            Opacity="0.95"
+                                            Visibility="{Binding ArrowVisibility}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <ItemsControl
+                            Panel.ZIndex="2"
+                            Width="{Binding RoiWidth}"
+                            Height="{Binding RoiHeight}"
+                            IsEnabled="{Binding CanInteract}"
+                            ItemsSource="{Binding Nodes}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="{x:Type ContentPresenter}">
+                                    <Setter Property="Canvas.Left" Value="{Binding CanvasLeft}" />
+                                    <Setter Property="Canvas.Top" Value="{Binding CanvasTop}" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button
+                                        Width="24"
+                                        Height="24"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Click="NodeButton_Click"
+                                        Cursor="Hand"
+                                        IsEnabled="{Binding IsCandidate}"
+                                        ToolTip="{Binding ToolTip}">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="{x:Type Button}">
+                                                <Grid
+                                                    Width="24"
+                                                    Height="24"
+                                                    Background="Transparent"
+                                                    ClipToBounds="False">
+                                                    <Ellipse
+                                                        Width="26"
+                                                        Height="26"
+                                                        Fill="#18000000"
+                                                        Stroke="{DynamicResource PrimaryBrush}"
+                                                        StrokeThickness="3"
+                                                        Visibility="{Binding SelectedStepTargetVisibility}" />
+                                                    <Ellipse
+                                                        Width="22"
+                                                        Height="22"
+                                                        Stroke="{DynamicResource PrimaryBrush}"
+                                                        StrokeThickness="2"
+                                                        Visibility="{Binding CandidateVisibility}" />
+                                                    <Ellipse
+                                                        Width="14"
+                                                        Height="14"
+                                                        Stroke="White"
+                                                        StrokeThickness="2"
+                                                        Visibility="{Binding CurrentVisibility}" />
+                                                    <Ellipse
+                                                        Width="6"
+                                                        Height="6">
+                                                        <Ellipse.Style>
+                                                            <Style TargetType="{x:Type Ellipse}">
+                                                                <Setter Property="Fill" Value="#58D68D" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsPlanned}" Value="True">
+                                                                        <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Ellipse.Style>
+                                                    </Ellipse>
+                                                    <ItemsControl
+                                                        Width="76"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        ItemsSource="{Binding StepBadges}"
+                                                        Visibility="{Binding BadgeVisibility}">
+                                                        <ItemsControl.RenderTransform>
+                                                            <TranslateTransform Y="{Binding StepBadgeOffsetY}" />
+                                                        </ItemsControl.RenderTransform>
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel HorizontalAlignment="Center" />
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border
+                                                                    Margin="1"
+                                                                    Padding="4,1"
+                                                                    BorderThickness="1"
+                                                                    CornerRadius="7">
+                                                                    <Border.Style>
+                                                                        <Style TargetType="{x:Type Border}">
+                                                                            <Setter Property="Background" Value="#2453B8" />
+                                                                            <Setter Property="BorderBrush" Value="#80FFFFFF" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                                    <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+                                                                                    <Setter Property="BorderBrush" Value="White" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Border.Style>
+                                                                    <TextBlock
+                                                                        Foreground="White"
+                                                                        FontSize="10"
+                                                                        FontWeight="SemiBold"
+                                                                        Text="{Binding Text}" />
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        </Grid>
+                    </Viewbox>
+                </Grid>
+            </Border>
+
+            <controls:TextBlock
+                Grid.Row="2"
+                Margin="2,7,2,0"
+                Foreground="{DynamicResource ThirdlyTextBrush}"
+                Text="{DynamicResource BlackFlowRouteSandboxMapHint}"
+                TextWrapping="Wrap" />
+        </Grid>
+
+        <Border
+            Grid.Column="2"
+            Padding="12"
+            Background="{DynamicResource RegionBrushOpacity25}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        MinWidth="92"
+                        HorizontalAlignment="Left"
+                        Command="{s:Action ReturnToMiniGame}"
+                        Content="{DynamicResource BlackFlowRouteSandboxBack}" />
+                    <Button
+                        Grid.Column="1"
+                        MinWidth="76"
+                        Command="{s:Action RefreshMap}"
+                        Content="{DynamicResource BlackFlowRouteSandboxRefresh}"
+                        IsEnabled="{c:Binding '!IsBusy'}" />
+                </Grid>
+
+                <ProgressBar
+                    Grid.Row="1"
+                    Height="2"
+                    Margin="0,8,0,0"
+                    IsIndeterminate="True"
+                    Visibility="{c:Binding 'IsBusy'}" />
+
+                <hc:ScrollViewer
+                    Grid.Row="2"
+                    Margin="0,10,0,8"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsEnabled="{Binding CanInteract}"
+                    IsInertiaEnabled="True"
+                    PanningMode="VerticalOnly"
+                    VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="{DynamicResource BlackFlowRouteSandboxPlan}" />
+                        <Grid Margin="0,5,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox
+                                Margin="0,0,6,0"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{Binding Plans}"
+                                SelectedItem="{Binding SelectedPlan}" />
+                            <Button
+                                Grid.Column="1"
+                                MinWidth="42"
+                                Command="{s:Action AddPlan}"
+                                Content="+" />
+                            <Button
+                                Grid.Column="2"
+                                MinWidth="58"
+                                Margin="6,0,0,0"
+                                Command="{s:Action DeletePlan}"
+                                Content="{DynamicResource BlackFlowRouteSandboxDeletePlan}"
+                                IsEnabled="{Binding CanDeletePlan}" />
+                        </Grid>
+
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="{DynamicResource BlackFlowRouteSandboxMovement}" />
+                        <ComboBox
+                            Margin="0,5,0,7"
+                            DisplayMemberPath="Display"
+                            ItemsSource="{Binding MovementOptions}"
+                            SelectedItem="{Binding SelectedMovement}" />
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="84" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="{DynamicResource BlackFlowRouteSandboxCharges}" />
+                            <hc:NumericUpDown
+                                Grid.Column="1"
+                                Height="32"
+                                HorizontalContentAlignment="Center"
+                                IsEnabled="{Binding CanEditMovementCharges}"
+                                Maximum="99"
+                                Minimum="0"
+                                Value="{Binding SelectedMovementCharges, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+
+                        <Border
+                            Margin="0,0,0,10"
+                            Padding="8,6"
+                            Background="{DynamicResource RegionBrushOpacity50}"
+                            CornerRadius="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource BlackFlowRouteSandboxRemainingAP}" />
+                                    <TextBlock Margin="4,0,0,0" FontWeight="SemiBold" Text="{Binding RemainingActionPoints}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource BlackFlowRouteSandboxReachable}" />
+                                    <TextBlock Margin="4,0,0,0" FontWeight="SemiBold" Text="{Binding ReachableNodeCount}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="{DynamicResource BlackFlowRouteSandboxSteps}" />
+                        <TextBlock
+                            Margin="0,8"
+                            HorizontalAlignment="Center"
+                            Foreground="{DynamicResource ThirdlyTextBrush}"
+                            Text="{DynamicResource BlackFlowRouteSandboxNoSteps}"
+                            Visibility="{c:Binding 'VisibleSteps.Count == 0'}" />
+                        <ListBox
+                            MinHeight="96"
+                            MaxHeight="230"
+                            Margin="0,5,0,0"
+                            Padding="0"
+                            HorizontalContentAlignment="Stretch"
+                            BorderThickness="0"
+                            ItemsSource="{Binding VisibleSteps}"
+                            SelectedItem="{Binding SelectedStep}">
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource NoSelectedHighlightListBoxItemStyle}" TargetType="{x:Type ListBoxItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Margin="0,2"
+                                        Padding="7,5"
+                                        BorderThickness="1"
+                                        CornerRadius="4">
+                                        <Border.Style>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="Background" Value="{DynamicResource RegionBrushOpacity50}" />
+                                                <Setter Property="BorderBrush" Value="Transparent" />
+                                                <Style.Triggers>
+                                                    <DataTrigger
+                                                        Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}"
+                                                        Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource MouseOverRegionBrushOpacity75}" />
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border
+                                                MinWidth="30"
+                                                Height="24"
+                                                Padding="5,1"
+                                                VerticalAlignment="Top"
+                                                Background="#2453B8"
+                                                CornerRadius="12">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="White"
+                                                    FontWeight="SemiBold"
+                                                    Text="{Binding Badge}" />
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="7,0">
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding MovementDisplay}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock FontSize="11" Foreground="{DynamicResource ThirdlyTextBrush}">
+                                                    <Run Text="{DynamicResource BlackFlowRouteSandboxTargetNode}" />
+                                                    <Run Text="{Binding TargetDisplay, Mode=OneWay}" />
+                                                </TextBlock>
+                                                <TextBlock
+                                                    FontSize="11"
+                                                    Foreground="{DynamicResource DangerBrush}"
+                                                    Text="{Binding Step.Error}"
+                                                    TextWrapping="Wrap"
+                                                    Visibility="{c:Binding '!Step.IsValid'}" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+                                                <TextBlock HorizontalAlignment="Right">
+                                                    <Run Text="-" />
+                                                    <Run Text="{Binding Step.ActionPointCost, Mode=OneWay}" />
+                                                    <Run Text=" AP" />
+                                                </TextBlock>
+                                                <TextBlock
+                                                    HorizontalAlignment="Right"
+                                                    FontSize="11"
+                                                    Foreground="{DynamicResource ThirdlyTextBrush}"
+                                                    Text="{DynamicResource BlackFlowRouteSandboxPredicted}"
+                                                    Visibility="{c:Binding 'Step.IsPredicted'}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </hc:ScrollViewer>
+
+                <StackPanel Grid.Row="3" IsEnabled="{Binding CanInteract}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Margin="0,0,4,0"
+                            Command="{s:Action Undo}"
+                            Content="{DynamicResource BlackFlowRouteSandboxUndo}"
+                            IsEnabled="{Binding CanUndo}" />
+                        <Button
+                            Grid.Column="1"
+                            Margin="4,0,0,0"
+                            Command="{s:Action Redo}"
+                            Content="{DynamicResource BlackFlowRouteSandboxRedo}"
+                            IsEnabled="{Binding CanRedo}" />
+                    </Grid>
+                    <Button
+                        Margin="0,8,0,0"
+                        Command="{s:Action BranchFromSelectedStep}"
+                        Content="{DynamicResource BlackFlowRouteSandboxBranch}"
+                        IsEnabled="{Binding CanBranch}" />
+                    <Border
+                        Margin="0,8,0,0"
+                        Padding="8,6"
+                        Background="#20D94A4A"
+                        BorderBrush="{DynamicResource DangerBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Visibility="{Binding ErrorVisibility}">
+                        <TextBlock
+                            Foreground="{DynamicResource DangerBrush}"
+                            Text="{Binding ErrorMessage}"
+                            TextWrapping="Wrap" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

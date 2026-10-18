@@ -2160,4 +2160,45 @@ MAA를 독립된 새 폴더에 압축 해제하거나, MAA에 속하지 않는 D
     <system:String x:Key="PleaseSelectItem">항목을 선택하세요</system:String>
     <system:String x:Key="EmulatorSelectionCancelled">에뮬레이터 선택이 취소되었습니다</system:String>
     <!--  !ItemSelection  -->
+    <!--  BlackFlow Route Sandbox  -->
+    <system:String x:Key="BlackFlowRouteSandbox">경로 샌드박스</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTip">현재 층과 지도를 인식한 뒤 지도에서 여러 경로를 계획합니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapStatus">{0}층 · 행동력 {1}</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapHint">초록색 점은 인식된 노드입니다. 휠로 확대·축소하고 드래그하여 이동할 수 있으며, 도달 가능한 노드가 강조됩니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBack">편의 기능으로 돌아가기</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRefresh">지도 새로고침</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPlan">플랜</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlan">삭제</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlanConfirm">{0} 계획을 삭제하시겠습니까?</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovement">이동 방식</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementAutomatic">노드 선택 후 결정</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCharges">사용 횟수 제한(0 = 무제한)</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRemainingAP">예상 잔여 행동력</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxReachable">도달 가능</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxSteps">경로 단계</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxNoSteps">강조된 노드를 눌러 첫 단계를 추가하세요</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTargetNode">목표 노드: </system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPredicted">예측</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUndo">실행 취소</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRedo">다시 실행</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBranch">선택한 단계에서 분기</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStartFailed">경로 샌드박스를 시작하지 못했습니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCommandFailed">Core가 경로 샌드박스 명령을 받지 않았습니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidSnapshot">지도 스냅샷에 유효한 식별자가 없습니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidImage">지도 영역 이미지를 읽지 못했습니다. 마지막 유효 결과를 유지합니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStepNotValidated">현재 스냅샷에서 이 단계를 검증하지 못했습니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUnknownError">경로 샌드박스에서 알 수 없는 오류를 반환했습니다.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementWalk">도보 이동</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM01">M01 · 폐기 바퀴</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM02">M02 · 폐기 의지</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM03">M03 · 표준 엔진</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM04">M04 · 중형 스프링</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM05">M05 · 에어쿠션 베이스</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM06">M06 · 시험형 외골격</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM07">M07 · 소팔계</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM08">M08 · 일회용 제트팩</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM09">M09 · 노모의 눈녹임</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM10">M10 · 칸노트의 촉수</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM11">M11 · 구조적 원리</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM12">M12 · 간이 리모컨</system:String>
 </ResourceDictionary>

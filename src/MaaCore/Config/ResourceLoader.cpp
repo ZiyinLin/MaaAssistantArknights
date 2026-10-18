@@ -3,6 +3,7 @@
 #include <array>
 #include <filesystem>
 #include <future>
+#include <optional>
 
 #include "GeneralConfig.h"
 #include "Miscellaneous/AvatarCacheManager.h"
@@ -16,6 +17,7 @@
 #include "Miscellaneous/StageDropsConfig.h"
 #include "Miscellaneous/TilePack.h"
 #include "OnnxSessions.h"
+#include "Roguelike/BlackFlow/BlackFlowMapPerceptionResource.h"
 #include "Roguelike/JieGarden/RoguelikeCoppersConfig.h"
 #include "Roguelike/RoguelikeCopilotConfig.h"
 #include "Roguelike/RoguelikeMapConfig.h"
@@ -252,6 +254,22 @@ bool asst::ResourceLoader::load(const std::filesystem::path& path)
                 "RoguelikeMapConfig")) {
             return false;
         }
+    }
+
+    const auto blackflow_map_perception_path = path / roguelike_path("BlackFlow", "map_perception"_p);
+    const auto blackflow_model_path = path / "onnx"_p / "BlackFlow_corridor_net.onnx"_p;
+    std::optional<std::filesystem::path> blackflow_model;
+    if (std::filesystem::is_regular_file(blackflow_model_path)) {
+        blackflow_model = blackflow_model_path;
+    }
+    else {
+        Log.warn("Optional BlackFlow map model is missing, path:", blackflow_model_path);
+    }
+    if (!std::filesystem::is_directory(blackflow_map_perception_path)) {
+        Log.warn("Optional BlackFlow map perception metadata is missing, path:", blackflow_map_perception_path);
+    }
+    if (!BlackFlowMapPerceptionResource::get_instance().load(blackflow_map_perception_path, blackflow_model)) {
+        return false;
     }
 
     // ==================== 主题专属插件配置 ====================

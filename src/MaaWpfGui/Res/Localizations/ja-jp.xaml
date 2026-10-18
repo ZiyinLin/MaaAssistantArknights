@@ -2160,4 +2160,45 @@ MAA を複数開くには、新しい MAA を他のフォルダにコピーし�
     <system:String x:Key="PleaseSelectItem">項目を選択してください</system:String>
     <system:String x:Key="EmulatorSelectionCancelled">エミュレータの選択がキャンセルされました</system:String>
     <!--  !ItemSelection  -->
+    <!--  BlackFlow Route Sandbox  -->
+    <system:String x:Key="BlackFlowRouteSandbox">ルートサンドボックス</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTip">現在の階層とマップを認識し、マップ上で複数のルートを作成します。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapStatus">{0}階 · 行動力 {1}</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapHint">緑の点は認識されたノードです。ホイールで拡大縮小し、ドラッグで移動できます。到達可能なノードが強調表示されます。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBack">便利機能に戻る</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRefresh">マップを更新</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPlan">プラン</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlan">削除</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlanConfirm">プラン {0} を削除しますか？</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovement">移動方法</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementAutomatic">ノード選択後に決定</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCharges">使用回数の上限（0 = 無制限）</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRemainingAP">予想残り行動力</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxReachable">到達可能</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxSteps">ルート手順</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxNoSteps">強調されたノードを選んで最初の手順を追加</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTargetNode">対象ノード：</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPredicted">予測</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUndo">元に戻す</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRedo">やり直す</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBranch">選択した手順から分岐</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStartFailed">ルートサンドボックスを開始できませんでした。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCommandFailed">Core がルートサンドボックスのコマンドを受け付けませんでした。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidSnapshot">マップスナップショットに有効な識別子がありません。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidImage">マップ領域を読み込めませんでした。直前の有効な結果を表示しています。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStepNotValidated">この手順は現在のスナップショットで検証されていません。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUnknownError">ルートサンドボックスから不明なエラーが返されました。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementWalk">徒歩移動</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM01">M01 · 廃棄ホイール</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM02">M02 · 廃棄義肢</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM03">M03 · 標準エンジン</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM04">M04 · 重スプリング</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM05">M05 · エアクッション台座</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM06">M06 · 試作外骨格</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM07">M07 · 小八界</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM08">M08 · 使い捨てジェットパック</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM09">M09 · 老母の雪解け</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM10">M10 · カンノットの触手</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM11">M11 · 構造原理</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM12">M12 · 簡易リモコン</system:String>
 </ResourceDictionary>

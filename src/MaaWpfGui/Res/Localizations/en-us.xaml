@@ -2159,4 +2159,45 @@ These locations are too high-level and can lead to file overwrites, config write
     <system:String x:Key="PleaseSelectItem">Please select an item</system:String>
     <system:String x:Key="EmulatorSelectionCancelled">Emulator selection cancelled</system:String>
     <!--  !ItemSelection  -->
+    <!--  BlackFlow Route Sandbox  -->
+    <system:String x:Key="BlackFlowRouteSandbox">Route Sandbox</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTip">Recognize the current floor and map, then draft multiple routes directly on the map.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapStatus">Floor {0} · AP {1}</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapHint">Green dots are recognized nodes. Use the wheel to zoom and drag to pan; reachable nodes are highlighted.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBack">Back to Useful Tasks</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRefresh">Refresh Map</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPlan">Plan</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlan">Delete</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlanConfirm">Delete plan {0}?</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovement">Movement</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementAutomatic">Choose after selecting a node</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCharges">Use Limit (0 = unlimited)</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRemainingAP">Projected AP</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxReachable">Reachable</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxSteps">Route Steps</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxNoSteps">Select a highlighted node to add the first step</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTargetNode">Target: </system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPredicted">Estimated</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUndo">Undo</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRedo">Redo</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBranch">Branch from Selected Step</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStartFailed">Could not start the route sandbox.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCommandFailed">Core did not accept the route sandbox command.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidSnapshot">The map snapshot has no valid identifier.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidImage">Could not read the map ROI. The last valid result is still shown.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStepNotValidated">This step was not validated against the current snapshot.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUnknownError">The route sandbox returned an unknown error.</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementWalk">Walk</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM01">M01 · Scrap Wheel</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM02">M02 · Scrap Prosthesis</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM03">M03 · Standard Engine</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM04">M04 · Heavy Spring</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM05">M05 · Air-cushion Base</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM06">M06 · Prototype Exoskeleton</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM07">M07 · Little Eightfold Realm</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM08">M08 · Disposable Jetpack</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM09">M09 · Mom's Snowmelt</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM10">M10 · Cannot's Tentacle</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM11">M11 · Structural Principle</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM12">M12 · Simple Remote</system:String>
 </ResourceDictionary>

@@ -189,4 +189,9 @@ public enum AsstTaskType : byte
     /// 自定义任务
     /// </summary>
     Custom,
+
+    /// <summary>
+    /// 黑流树海路线沙盘
+    /// </summary>
+    BlackFlowRouteSandbox,
 }

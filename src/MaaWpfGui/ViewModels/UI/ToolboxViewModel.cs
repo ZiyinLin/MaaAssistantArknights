@@ -40,6 +40,7 @@ using MaaWpfGui.Models.AsstTasks;
 using MaaWpfGui.States;
 using MaaWpfGui.Utilities;
 using MaaWpfGui.Utilities.ValueType;
+using MaaWpfGui.ViewModels.UserControl.Toolbox;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ObservableCollections;
@@ -81,6 +82,7 @@ public class ToolboxViewModel : Screen
         LocalizationHelper.LanguageChanged += () => {
             DisplayName = LocalizationHelper.GetString("Toolbox");
             RecruitInfo = LocalizationHelper.GetString("RecruitmentRecognitionTip");
+            UpdateMiniGameTaskList();
             Application.Current.Dispatcher.InvokeAsync(
                 () => {
                     LoadDepotDetails();
@@ -103,6 +105,7 @@ public class ToolboxViewModel : Screen
         InitializeOperBoxRowPresentation();
         OperBoxSelectedIndex = OperBoxNotHaveList.Count > 0 ? 0 : 1;
 
+        BlackFlowRouteSandbox = new BlackFlowRouteSandboxUserControlModel(this);
         UpdateMiniGameTaskList();
     }
 
@@ -2253,6 +2256,12 @@ public class ToolboxViewModel : Screen
 
     #region MiniGame
 
+    public enum MiniGameItemKind
+    {
+        CoreTask,
+        BlackFlowRouteSandbox,
+    }
+
     public class MiniGameCategoryItem : PropertyChangedBase
     {
         public string Display { get; set; } = string.Empty;
@@ -2261,10 +2270,34 @@ public class ToolboxViewModel : Screen
 
         public string Category { get; set; } = string.Empty;
 
-        public bool IsSecretFront => Value == "MiniGame@SecretFront";
+        public MiniGameItemKind ItemKind { get; set; }
+
+        public bool IsSecretFront => ItemKind == MiniGameItemKind.CoreTask && Value == "MiniGame@SecretFront";
     }
 
     public ObservableCollection<MiniGameCategoryItem> MiniGameCategoryItems { get; } = [];
+
+    public BlackFlowRouteSandboxUserControlModel BlackFlowRouteSandbox { get; }
+
+    public BlackFlowRouteSandboxUserControlModel? BlackFlowRouteSandboxContent => IsBlackFlowRouteSandboxOpen
+        ? BlackFlowRouteSandbox
+        : null;
+
+    public bool IsBlackFlowRouteSandboxOpen
+    {
+        get;
+        private set {
+            if (SetAndNotify(ref field, value))
+            {
+                NotifyOfPropertyChange(nameof(BlackFlowRouteSandboxContent));
+            }
+        }
+    }
+
+    public void ExitBlackFlowRouteSandbox()
+    {
+        IsBlackFlowRouteSandboxOpen = false;
+    }
 
     private MiniGameCategoryItem? _selectedMiniGameItem;
 
@@ -2283,6 +2316,7 @@ public class ToolboxViewModel : Screen
 
     public static void UpdateMiniGameTaskList()
     {
+        var permanentCategory = LocalizationHelper.GetString("MiniGameCategoryPermanent");
         var categorizedItems = Instances.StageManager.MiniGameEntries
             .Select(t => {
                 var isCurrentEvent = t.UtcStartTime != DateTime.MinValue || t.UtcExpireTime != DateTime.MinValue;
@@ -2298,6 +2332,13 @@ public class ToolboxViewModel : Screen
                 };
             })
             .ToList();
+
+        categorizedItems.Insert(0, new MiniGameCategoryItem {
+            Display = LocalizationHelper.GetString("BlackFlowRouteSandbox"),
+            Value = "BlackFlowRouteSandbox",
+            Category = permanentCategory,
+            ItemKind = MiniGameItemKind.BlackFlowRouteSandbox,
+        });
 
         Execute.OnUIThread(() => {
             var toolbox = Instances.ToolboxViewModel;
@@ -2349,6 +2390,11 @@ public class ToolboxViewModel : Screen
 
     private static string GetMiniGameTip(string name)
     {
+        if (name == "BlackFlowRouteSandbox")
+        {
+            return LocalizationHelper.GetString("BlackFlowRouteSandboxTip");
+        }
+
         if (string.IsNullOrEmpty(name))
         {
             return LocalizationHelper.GetString("MiniGameNameEmptyTip");
@@ -2438,6 +2484,19 @@ public class ToolboxViewModel : Screen
         if (_runningState.GetStopping())
         {
             Instances.TaskQueueViewModel.SetStopped();
+            return;
+        }
+
+        if (SelectedMiniGameItem?.ItemKind == MiniGameItemKind.BlackFlowRouteSandbox)
+        {
+            caught = BlackFlowRouteSandbox.Open();
+            if (!caught)
+            {
+                _runningState.SetIdle(true);
+                return;
+            }
+
+            IsBlackFlowRouteSandboxOpen = true;
             return;
         }
 

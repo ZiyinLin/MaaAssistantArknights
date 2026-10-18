@@ -2161,4 +2161,45 @@ DEBUG 目录下保存的图片有数量限制，超出后会自动清理旧图�
     <system:String x:Key="PleaseSelectItem">请选择一项</system:String>
     <system:String x:Key="EmulatorSelectionCancelled">已取消选择模拟器</system:String>
     <!--  !ItemSelection  -->
+    <!--  BlackFlow Route Sandbox  -->
+    <system:String x:Key="BlackFlowRouteSandbox">路线沙盘</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTip">自动识别当前楼层和地图，在地图上编排多套行动路线。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapStatus">{0} 层 · 行动力 {1}</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMapHint">绿色小点表示识别到的节点；滚轮缩放地图，按住拖动；可到达节点会高亮。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBack">返回牛杂</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRefresh">刷新地图</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPlan">方案</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlan">删除</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxDeletePlanConfirm">确定删除方案 {0} 吗？</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovement">移动方式</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementAutomatic">点节点后选择</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCharges">使用次数限制（0=不限）</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRemainingAP">预计剩余行动力</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxReachable">可到达</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxSteps">路线步骤</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxNoSteps">点击高亮节点添加第一步</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxTargetNode">目标节点：</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxPredicted">预测</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUndo">撤销</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxRedo">重做</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxBranch">从当前步骤分支</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStartFailed">无法启动路线沙盘。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxCommandFailed">路线沙盘命令未被 Core 接受。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidSnapshot">地图快照缺少有效标识。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxInvalidImage">无法读取地图区域图像，已保留上一次结果。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxStepNotValidated">该步骤未通过当前快照验证。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxUnknownError">路线沙盘返回了未知错误。</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementWalk">徒步跋涉</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM01">M01 · 报废轮子</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM02">M02 · 报废假肢</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM03">M03 · 标准引擎</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM04">M04 · 重弹簧</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM05">M05 · 气垫底座</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM06">M06 · 试作外骨骼</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM07">M07 · 小八界</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM08">M08 · 一次性喷气背包</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM09">M09 · 老妈妈的融雪</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM10">M10 · 坎诺特的触须</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM11">M11 · 结构性原理</system:String>
+    <system:String x:Key="BlackFlowRouteSandboxMovementM12">M12 · 简易遥控器</system:String>
 </ResourceDictionary>

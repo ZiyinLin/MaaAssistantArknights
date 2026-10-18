@@ -710,6 +710,10 @@ public class AsstProxy
 
     private AsstHandle _handle;
 
+    public delegate void AsstTaskChainMsgDelegate(AsstMsg type, int taskId);
+
+    public event AsstTaskChainMsgDelegate? AsstTaskChainMsgEvent;
+
     public delegate void AsstSubTaskMsgDelegate(AsstMsg type, AsstSubTaskMsg? msg);
 
     public event AsstSubTaskMsgDelegate? AsstSubTaskMsgEvent;
@@ -743,6 +747,10 @@ public class AsstProxy
                 goto case AsstMsg.TaskChainExtraInfo; // fallthrough
             case AsstMsg.TaskChainExtraInfo:
                 ProcTaskChainMsg(msg, details);
+                if (msg is AsstMsg.TaskChainError or AsstMsg.TaskChainCompleted or AsstMsg.TaskChainStopped)
+                {
+                    AsstTaskChainMsgEvent?.Invoke(msg, details.Value<int?>("taskid") ?? 0);
+                }
                 break;
 
             case AsstMsg.SubTaskError:
@@ -762,6 +770,15 @@ public class AsstProxy
                 break;
 
             case AsstMsg.SubTaskStopped:
+                try
+                {
+                    var payload = details.ToObject<AsstSubTaskMsg>() ?? null;
+                    AsstSubTaskMsgEvent?.Invoke(msg, payload);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("Failed to parse SubTaskStopped: {ExMessage}\nSubTaskMsg:{SubTaskMsg}", ex.Message, details);
+                }
                 break;
 
             case AsstMsg.ReportRequest:
@@ -2875,6 +2892,9 @@ public class AsstProxy
         /// <summary>小游戏</summary>
         MiniGame,
 
+        /// <summary>黑流树海路线沙盘</summary>
+        BlackFlowRouteSandbox,
+
         /// <summary>自定义任务s</summary>
         Custom,
     }
@@ -3002,6 +3022,29 @@ public class AsstProxy
         };
         var (type, param) = task.Serialize();
         return AsstAppendTaskWithEncoding(TaskType.MiniGame, type, param) && AsstStart();
+    }
+
+    /// <summary>
+    /// Appends the persistent BlackFlow route sandbox task.
+    /// </summary>
+    /// <param name="taskParams">Initial sandbox command.</param>
+    /// <returns>Whether the task was appended and its task ID.</returns>
+    public (bool IsSuccess, int TaskId) AsstAppendBlackFlowRouteSandbox(JObject taskParams)
+    {
+        return AsstAppendTaskWithEncoding(
+            TaskType.BlackFlowRouteSandbox,
+            (AsstTaskType.BlackFlowRouteSandbox, taskParams));
+    }
+
+    /// <summary>
+    /// Sends a command to the persistent BlackFlow route sandbox task.
+    /// </summary>
+    /// <param name="taskId">Sandbox task ID.</param>
+    /// <param name="taskParams">Sandbox command.</param>
+    /// <returns>Whether the command was accepted.</returns>
+    public bool AsstSetBlackFlowRouteSandboxParams(int taskId, JObject taskParams)
+    {
+        return AsstSetTaskParamsEncoded(taskId, taskParams);
     }
 
     /*

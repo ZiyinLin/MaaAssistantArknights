@@ -11,6 +11,7 @@
 #include "Controller/Controller.h"
 #include "Status.h"
 #include "Task/Interface/AwardTask.h"
+#include "Task/Interface/BlackFlowRouteSandboxTask.h"
 #include "Task/Interface/CloseDownTask.h"
 #include "Task/Interface/CopilotTask.h"
 #include "Task/Interface/CustomTask.h"
@@ -278,6 +279,7 @@ asst::Assistant::TaskId asst::Assistant::append_task(const std::string& type, co
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(InfrastTask)
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(RecruitTask)
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(RoguelikeTask)
+    ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(BlackFlowRouteSandboxTask)
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(CopilotTask)
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(SSSCopilotTask)
     ASST_ASSISTANT_APPEND_TASK_FROM_STRING_IF_BRANCH(ParadoxCopilotTask)

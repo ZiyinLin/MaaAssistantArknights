@@ -24,8 +24,12 @@ bool asst::OnnxSessions::load(const std::filesystem::path& path)
     Log.info("record path", path.lexically_relative(UserDir.get()));
 
     std::string name = utils::path_to_utf8_string(path.stem());
-
+    std::lock_guard lock(m_mutex);
     if (auto iter = m_model_paths.find(name); iter == m_model_paths.end() || iter->second != path) {
+        if (m_session_users.contains(name)) {
+            Log.error(__FUNCTION__, "cannot replace an ONNX model while its session is acquired", name);
+            return false;
+        }
         m_sessions.erase(name);
         m_model_paths.insert_or_assign(name, path);
     }
@@ -33,9 +37,9 @@ bool asst::OnnxSessions::load(const std::filesystem::path& path)
     return true;
 }
 
-Ort::Session& asst::OnnxSessions::get(const std::string& name)
+Ort::Session& asst::OnnxSessions::get_or_create(const std::string& name)
 {
-    if (m_sessions.find(name) == m_sessions.end()) {
+    if (!m_sessions.contains(name)) {
         Log.info(__FUNCTION__, "lazy load", name);
         Ort::Session session(m_env, m_model_paths.at(name).c_str(), m_options);
         m_sessions.emplace(name, std::move(session));
@@ -43,9 +47,38 @@ Ort::Session& asst::OnnxSessions::get(const std::string& name)
     return m_sessions.at(name);
 }
 
+Ort::Session& asst::OnnxSessions::get(const std::string& name)
+{
+    std::lock_guard lock(m_mutex);
+    return get_or_create(name);
+}
+
+Ort::Session& asst::OnnxSessions::acquire(const std::string& name)
+{
+    std::lock_guard lock(m_mutex);
+    Ort::Session& session = get_or_create(name);
+    ++m_session_users[name];
+    return session;
+}
+
+void asst::OnnxSessions::release(const std::string& name)
+{
+    std::lock_guard lock(m_mutex);
+    const auto found = m_session_users.find(name);
+    if (found == m_session_users.end()) {
+        Log.error(__FUNCTION__, "session was not acquired", name);
+        return;
+    }
+    if (--found->second == 0) {
+        m_session_users.erase(found);
+        Log.info(__FUNCTION__, "released", name);
+    }
+}
+
 bool asst::OnnxSessions::use_cpu()
 {
-    if (m_sessions.size() != 0) {
+    std::lock_guard lock(m_mutex);
+    if (!m_sessions.empty()) {
         return false;
     }
     m_options = Ort::SessionOptions();
@@ -77,10 +110,11 @@ bool asst::OnnxSessions::use_cpu()
 
 bool asst::OnnxSessions::use_gpu(int device_id)
 {
+    std::lock_guard lock(m_mutex);
     if (gpu_enabled) {
         return true;
     }
-    if (m_sessions.size() != 0) {
+    if (!m_sessions.empty()) {
         return false;
     }
     auto all_providers = Ort::GetAvailableProviders();
