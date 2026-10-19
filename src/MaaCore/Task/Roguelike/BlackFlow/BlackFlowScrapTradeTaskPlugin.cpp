@@ -191,12 +191,6 @@ void BlackFlowScrapTradeTaskPlugin::decide()
             m_phase = Phase::Trade;
             continue;
         case Phase::Trade:
-            if (!m_sell_backs.empty()) {
-                if (switch_tab(true, selling) || sell_back()) {
-                    return;
-                }
-                continue;
-            }
             if (switch_tab(false, selling)) {
                 return;
             }
@@ -207,13 +201,30 @@ void BlackFlowScrapTradeTaskPlugin::decide()
                 const int reserved = m_session->reserved_amount("ingots");
                 const Funds funds { wallet, reserved, std::max(0, wallet - reserved) };
                 std::vector<std::string> skipped;
-                if (buy(image, funds, skipped) || refresh(funds)) {
+                if (buy(image, funds, skipped)) {
+                    return;
+                }
+                // 当前货架已无可买商品时集中卖回，再用到账余额检查同一面货架。
+                if (!m_sell_backs.empty()) {
+                    m_phase = Phase::SellBack;
+                    continue;
+                }
+                if (refresh(funds)) {
                     return;
                 }
                 LogInfo << __FUNCTION__ << "BlackFlow scrap trade buying finished" << "budget" << funds.budget
                         << "wallet" << funds.wallet << "reserved" << funds.reserved << "skipped" << skipped;
             }
             m_phase = Phase::Liquidate;
+            continue;
+        case Phase::SellBack:
+            if (!m_sell_backs.empty()) {
+                if (switch_tab(true, selling) || sell_back()) {
+                    return;
+                }
+                continue;
+            }
+            m_phase = Phase::Trade;
             continue;
         case Phase::Liquidate:
             if (!m_liquidating) {
@@ -317,6 +328,11 @@ bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, const Funds& funds
 
     // 价格按名称查表，不识别货架价格；已知的价格效果只会降价，因此表价不会让余额不足。
     // 保留购买先于倒转；非兑现店按买表积累玉米和雾滚草，加工品每种每次进店最多补一件。
+    // 待卖回物品只用于周转，不占用保留加工品的数量和形状覆盖。
+    auto kept_ledger = m_ledger;
+    for (const auto& name : m_sell_backs) {
+        kept_ledger.record_sale(name);
+    }
     const auto skip_reason = [&](const ScrapItem& item, bool keep_natural) -> std::string_view {
         if (*item.price > funds.budget) {
             return "over budget";
@@ -327,13 +343,13 @@ bool BlackFlowScrapTradeTaskPlugin::buy(const cv::Mat& image, const Funds& funds
         if (m_kept.contains(item.name)) {
             return "bought this visit";
         }
-        if (scrap_keep_wanted(item, m_ledger, BlackFlowScrapMarket)) {
+        if (scrap_keep_wanted(item, kept_ledger, BlackFlowScrapMarket)) {
             return {};
         }
         if (item.category != ScrapCategory::Processing) {
             return "not kept here";
         }
-        return m_ledger.held_in(ScrapCategory::Processing, BlackFlowScrapMarket) >=
+        return kept_ledger.held_in(ScrapCategory::Processing, BlackFlowScrapMarket) >=
                        BlackFlowScrapMarket.processing_keep_limit()
                    ? "keep limit reached"
                    : "shapes covered";
@@ -450,7 +466,7 @@ void BlackFlowScrapTradeTaskPlugin::on_purchase_confirmed()
         m_kept.insert(purchase.name);
     }
     else {
-        // 增长物留到兑现，其余买入物与附带零件立即卖回，零件总数回到买入前。
+        // 增长物留到兑现，其余买入物与附带零件排队卖回，买完当前面或余额不足时集中处理。
         if (item->get().growth_per_acquisition == 0) {
             m_sell_backs.emplace_back(purchase.name);
         }

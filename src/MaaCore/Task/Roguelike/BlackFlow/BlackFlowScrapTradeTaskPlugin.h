@@ -42,6 +42,7 @@ private:
         Observe,
         Prepare,
         Trade,
+        SellBack,
         Liquidate,
         Leave,
     };
