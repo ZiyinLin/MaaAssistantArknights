@@ -9,6 +9,15 @@
         "template": "BlackFlow@Roguelike@ChooseOperConfirm.png",
         "roi": [1016, 602, 264, 118]
     },
+    "BlackFlow@StartExplore@Roguelike@ChooseOperConfirmToGiveUp": {
+        "next": [
+            "BlackFlow@StartExplore@Roguelike@ChooseOperConfirmToGiveUp@NextAfterLoadingText",
+            "BlackFlow@StartExplore@Roguelike@RecruitOther",
+            "BlackFlow@Roguelike@EnterAfterRecruit",
+            "BlackFlow@Roguelike@Stages#next",
+            "BlackFlow@StartExplore@Roguelike@ChooseOperConfirmToGiveUp"
+        ]
+    },
     "BlackFlow@StartExplore@Roguelike@ChooseOperFlag": {
         "template": "BlackFlow@Roguelike@ChooseOperConfirm.png",
         "roi": [1016, 602, 264, 118]
@@ -16,7 +25,14 @@
     "BlackFlow@StartExplore@Roguelike@RecruitOther": {
         "template": "BlackFlow@Roguelike@Recruit.png"
     },
-    "BlackFlow@StartExplore@Roguelike@RecruitWithoutButton": {},
+    "BlackFlow@StartExplore@Roguelike@RecruitWithoutButton": {
+        "next": [
+            "BlackFlow@StartExplore@Roguelike@RecruitOther",
+            "BlackFlow@Roguelike@EnterAfterRecruit",
+            "BlackFlow@Roguelike@Stages#next",
+            "BlackFlow@StartExplore@Roguelike@RecruitWithoutButton"
+        ]
+    },
     "BlackFlowReenter@BlackFlow@Roguelike@InventoryCleanupFailed": {
         "next": ["BlackFlow@Roguelike@RecoveryFailed"]
     },
@@ -39,6 +55,7 @@
         "template": "BlackFlow@Roguelike@AbandonConfirm.png",
         "reduceOtherTimes": [
             "BlackFlow@Roguelike@MapPrepare-ZoomOut*3",
+            "BlackFlow@Roguelike@NextLevel-ZoomOut*3",
             "BlackFlow@Roguelike@MovePreviewConfirm*4",
             "BlackFlow@Roguelike@MovePreviewWait*3",
             "BlackFlow@Roguelike@InventoryCapacityConfirm*3",
@@ -65,11 +82,8 @@
         "next": [
             "BlackFlow@Roguelike@ChooseDifficulty",
             "BlackFlow@Roguelike@StartExplore",
-            "BlackFlow@Roguelike@MapPrepare-FloorEnterZoom",
-            "BlackFlow@Roguelike@NextLevel",
             "BlackFlow@Roguelike@Stages#next",
             "BlackFlow@Roguelike@GetDrops#next",
-            "BlackFlow@Roguelike@NextLevel#next",
             "BlackFlow@Roguelike@ExitThenAbandon",
             "BlackFlow@Roguelike@Abandon",
             "BlackFlow@Roguelike@TodoEnter",
@@ -492,7 +506,7 @@
     "BlackFlow@Roguelike@EnterAfterRecruit": {
         "template": "BlackFlow@Roguelike@EnterAfterRecruit.png",
         "roi": [1040, 240, 240, 179],
-        "next": ["#self", "BlackFlow@Roguelike@NextLevel-Enter#next"]
+        "next": ["#self", "BlackFlow@Roguelike@Stages#next"]
     },
     "BlackFlow@Roguelike@EnteredPageClassification": {
         "algorithm": "OcrDetect",
@@ -623,7 +637,13 @@
     },
     "BlackFlow@Roguelike@GetDropCompleted": {
         "template": "BlackFlow@Roguelike@GetDropCompleted.png",
-        "specificRect": [600, 600, 25, 25]
+        "specificRect": [600, 600, 25, 25],
+        "next": [
+            "BlackFlow@Roguelike@GetDrops#next",
+            "BlackFlow@Roguelike@ChooseOperFlag",
+            "BlackFlow@Roguelike@Stages#next",
+            "BlackFlow@Roguelike@ClickToDrops"
+        ]
     },
     "BlackFlow@Roguelike@GetDropLeave": {
         "template": "BlackFlow@Roguelike@GetDropLeave.png"
@@ -937,13 +957,13 @@
         "postDelay": 500
     },
     "BlackFlow@Roguelike@MapPrepare-FloorEnterZoom": {
-        "Doc": "刚进入楼层时比例尺必定是大的，此刻两种放大镜状态分不清，所以不判状态直接切一次；比例尺缩小后节点不会压到顶部标题，楼层 OCR 才干净。",
+        "Doc": "刚进层时先切一次缩放，随后复核加减号；确认缩小后再识别层名，避免节点遮住标题。",
         "baseTask": "BlackFlow@Roguelike@MapPrepare-Ready",
         "template": ["BlackFlow@Roguelike@MapZoomIn.png", "BlackFlow@Roguelike@MapZoomOut.png"],
         "action": "ClickSelf",
         "preDelay": 500,
         "postDelay": 1000,
-        "next": ["BlackFlow@Roguelike@NextLevel"]
+        "next": ["BlackFlow@Roguelike@NextLevel-CheckZoom"]
     },
     "BlackFlow@Roguelike@MapPrepare-Ready": {
         "Doc": [
@@ -1300,25 +1320,49 @@
         "fullMatch": true
     },
     "BlackFlow@Roguelike@NextLevel": {
-        "Doc": "本任务注册了插件 BlackFlowLifecycleTaskPlugin，识别成功后记录当前楼层。",
+        "Doc": "本任务注册了 BlackFlowLifecycleTaskPlugin，识别成功后记录当前楼层。换层时只接受预期的下一层名称。",
+        "baseTask": "BlackFlow@Roguelike@NextLevel-FloorName",
+        "postDelay": 600,
+        "next": [
+            "BlackFlow@Roguelike@NextLevel@(BlackFlow@Roguelike@CloseCollection)",
+            "BlackFlow@Roguelike@MapPrepare-Ready",
+            "BlackFlow@Roguelike@MapPrepare-ZoomOut"
+        ]
+    },
+    "BlackFlow@Roguelike@NextLevel-CheckZoom": {
+        "algorithm": "JustReturn",
+        "next": [
+            "BlackFlow@Roguelike@NextLevel-CheckZoom@(BlackFlow@Roguelike@CloseCollection)",
+            "BlackFlow@Roguelike@NextLevel-MapReady",
+            "BlackFlow@Roguelike@NextLevel-ZoomOut"
+        ],
+        "onErrorNext": ["BlackFlow@Roguelike@RecoveryFailed"]
+    },
+    "BlackFlow@Roguelike@NextLevel-Enter": {
+        "algorithm": "JustReturn",
+        "next": ["BlackFlow@Roguelike@MapPrepare-FloorEnterZoom"]
+    },
+    "BlackFlow@Roguelike@NextLevel-FloorName": {
+        "Doc": "完整层名按楼层顺序保存，供生命周期插件设置 OCR 候选和换算层号。",
         "algorithm": "OcrDetect",
         "action": "DoNothing",
         "roi": [524, 0, 246, 42],
         "withoutDet": false,
         "text": ["玻利瓦尔肤层", "甜美的伤口", "血色空脉", "受害者腐殖", "卡德霍之颅", "未萌生的摇篮"],
         "ocrReplace": [["^玻利瓦尔肤$", "玻利瓦尔肤层"]],
-        "fullMatch": true,
-        "postDelay": 600,
-        "next": [
-            "BlackFlow@Roguelike@NextLevel@(BlackFlow@Roguelike@CloseCollection)",
-            "BlackFlow@Roguelike@MapPrepare-Ready",
-            "BlackFlow@Roguelike@MapPrepare-ZoomOut",
-            "BlackFlow@Roguelike@NextLevel"
-        ]
+        "fullMatch": true
     },
-    "BlackFlow@Roguelike@NextLevel-Enter": {
-        "algorithm": "JustReturn",
-        "next": ["BlackFlow@Roguelike@MapPrepare-FloorEnterZoom", "BlackFlow@Roguelike@NextLevel"]
+    "BlackFlow@Roguelike@NextLevel-MapReady": {
+        "Doc": "只检查缩放；完成回调由生命周期插件设置层名候选，NextLevel 识别完成后才进入地图准备。",
+        "baseTask": "BlackFlow@Roguelike@MapPrepare-Ready",
+        "template": "BlackFlow@Roguelike@MapZoomIn.png",
+        "next": ["BlackFlow@Roguelike@NextLevel"],
+        "reduceOtherTimes": ["BlackFlow@Roguelike@NextLevel-ZoomOut*3", "BlackFlow@Roguelike@MovementInventoryClose*3"]
+    },
+    "BlackFlow@Roguelike@NextLevel-ZoomOut": {
+        "baseTask": "BlackFlow@Roguelike@MapPrepare-ZoomOut",
+        "template": "BlackFlow@Roguelike@MapZoomOut.png",
+        "next": ["BlackFlow@Roguelike@NextLevel-CheckZoom"]
     },
     "BlackFlow@Roguelike@NodeCompletionAction": {
         "Doc": [
@@ -1388,7 +1432,6 @@
         "next": [
             "BlackFlow@Roguelike@Page-Door-Wait@(BlackFlow@Roguelike@CloseCollection)",
             "BlackFlow@Roguelike@Stages-MapReady",
-            "BlackFlow@Roguelike@Stages-ZoomOut",
             "BlackFlow@Roguelike@Page-Door-Wait"
         ],
         "exceededNext": ["BlackFlow@Roguelike@RecoveryFailed"]
@@ -1532,9 +1575,7 @@
             "BlackFlow@Roguelike@DropsFlag",
             "BlackFlow@Roguelike@ChooseOperFlag",
             "BlackFlow@Roguelike@StageEncounterGiveUpRecruitConfirm",
-            "BlackFlow@Roguelike@MapPrepare-FloorEnterZoom",
-            "BlackFlow@Roguelike@NextLevel",
-            "BlackFlow@Roguelike@NextLevel#next",
+            "BlackFlow@Roguelike@Stages#next",
             "BlackFlow@Roguelike@RecruitWithoutButton"
         ]
     },
@@ -2023,20 +2064,15 @@
         "onErrorNext": ["BlackFlow@Roguelike@ExitThenAbandon"]
     },
     "BlackFlow@Roguelike@Stages-MapReady": {
-        "template": "BlackFlow@Roguelike@MapZoomIn.png",
+        "Doc": "两种缩放状态都算返回地图，先完成旧节点，再由节点插件决定本层识图或换层。开局没有旧节点时直接进入进层准备。",
+        "template": ["BlackFlow@Roguelike@MapZoomIn.png", "BlackFlow@Roguelike@MapZoomOut.png"],
         "baseTask": "BlackFlow@Roguelike@MapPrepare-Ready",
         "next": ["BlackFlow@Roguelike@NodeCompletionAction"],
         "reduceOtherTimes": [
             "BlackFlow@Roguelike@MapPrepare-ZoomOut*3",
-            "BlackFlow@Roguelike@Stages-ZoomOut*3",
             "BlackFlow@Roguelike@MovementInventoryClose*3",
             "BlackFlow@Roguelike@Page-Door-Wait*10"
         ]
-    },
-    "BlackFlow@Roguelike@Stages-ZoomOut": {
-        "template": "BlackFlow@Roguelike@MapZoomOut.png",
-        "baseTask": "BlackFlow@Roguelike@MapPrepare-ZoomOut",
-        "next": ["BlackFlow@Roguelike@Stages"]
     },
     "BlackFlow@Roguelike@Stages_default": {
         "algorithm": "JustReturn",
@@ -2044,8 +2080,7 @@
             "BlackFlow@Roguelike@HuntedConfirm",
             "BlackFlow@Roguelike@Stages@(BlackFlow@Roguelike@CloseCollectionContinue)",
             "BlackFlow@Roguelike@Stages@(BlackFlow@Roguelike@CloseCollection)",
-            "BlackFlow@Roguelike@Stages-MapReady",
-            "BlackFlow@Roguelike@Stages-ZoomOut"
+            "BlackFlow@Roguelike@Stages-MapReady"
         ]
     },
     "BlackFlow@Roguelike@StartAction": {
@@ -2062,13 +2097,9 @@
             "BlackFlow@Roguelike@GamePass",
             "BlackFlow@Roguelike@StartAction@LoadingText",
             "BlackFlow@Roguelike@StartAction@LoadingIcon",
-            "BlackFlow@Roguelike@StartAction-NextLevel",
+            "BlackFlow@Roguelike@Stages-MapReady",
             "BlackFlow@Roguelike@StartActionReCheck"
         ]
-    },
-    "BlackFlow@Roguelike@StartAction-NextLevel": {
-        "baseTask": "BlackFlow@Roguelike@NextLevel",
-        "next": ["BlackFlow@Roguelike@NodeCompletionAction"]
     },
     "BlackFlow@Roguelike@StartExplore": {
         "template": "BlackFlow@Roguelike@StartExplore.png",

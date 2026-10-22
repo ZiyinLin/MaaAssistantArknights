@@ -139,6 +139,10 @@ bool BlackFlowLifecycleTaskPlugin::verify(AsstMsg msg, const json::value& detail
             return true;
         }
     }
+    if (msg == AsstMsg::SubTaskCompleted && task == "BlackFlow@Roguelike@NextLevel-MapReady") {
+        m_pending = PendingWork::PrepareFloorRecognition;
+        return true;
+    }
     if (msg == AsstMsg::SubTaskCompleted && task == "BlackFlow@Roguelike@NextLevel") {
         m_pending = PendingWork::RecordCurrentFloor;
         m_pending_details = details;
@@ -209,13 +213,33 @@ bool BlackFlowLifecycleTaskPlugin::_run()
         stop_start_run("reward_page_missing");
         return false;
     }
+    if (work == PendingWork::PrepareFloorRecognition) {
+        const auto task = Task.get<OcrTaskInfo>("BlackFlow@Roguelike@NextLevel-FloorName");
+        if (m_session == nullptr || task == nullptr || task->text.empty()) {
+            LogError << __FUNCTION__ << "BlackFlow floor recognition configuration is missing";
+            return false;
+        }
+        auto floor_names = task->text;
+        if (m_session->completed_page_changes_floor()) {
+            const int floor = m_session->page_context()->floor + 1;
+            if (floor < 1 || static_cast<std::size_t>(floor) > floor_names.size()) {
+                LogError << __FUNCTION__ << "BlackFlow next floor is out of range" << floor;
+                return false;
+            }
+            // 换层动画可能仍显示旧层名，只接受旧节点所在层的下一层。
+            floor_names = { floor_names.at(floor - 1) };
+        }
+        return Task.lazy_parse(
+            json::object {
+                { "BlackFlow@Roguelike@NextLevel", json::object { { "text", json::array(floor_names) } } } });
+    }
     if (work == PendingWork::RecordCurrentFloor) {
         if (m_session == nullptr) {
             Log.error("BlackFlow floor recognition has no active session");
             return false;
         }
         const std::string area_name = details.get("details", "result", "text", "");
-        const auto task = Task.get<OcrTaskInfo>("BlackFlow@Roguelike@NextLevel");
+        const auto task = Task.get<OcrTaskInfo>("BlackFlow@Roguelike@NextLevel-FloorName");
         if (task == nullptr || area_name.empty()) {
             m_session->clear_current_floor();
             m_session->fail(

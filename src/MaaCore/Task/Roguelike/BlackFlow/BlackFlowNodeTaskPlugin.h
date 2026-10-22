@@ -20,6 +20,7 @@ private:
     {
         None,
         BindDispatch,
+        MapReturned,
         ApplyResult,
         RecoverMapCompleted,
         RecoverMapFailed,

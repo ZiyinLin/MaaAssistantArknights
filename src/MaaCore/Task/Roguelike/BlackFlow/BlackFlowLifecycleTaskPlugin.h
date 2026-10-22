@@ -20,6 +20,7 @@ private:
     enum class PendingWork
     {
         None,
+        PrepareFloorRecognition,
         RecordCurrentFloor,
         ResolveTerminalAction,
         ResetAfterAbandon,

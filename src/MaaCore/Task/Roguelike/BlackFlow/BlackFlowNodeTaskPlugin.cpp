@@ -49,6 +49,10 @@ bool BlackFlowNodeTaskPlugin::verify(AsstMsg msg, const json::value& details) co
         m_pending_details = details;
         return true;
     }
+    if (msg == AsstMsg::SubTaskCompleted && task == "BlackFlow@Roguelike@Stages-MapReady") {
+        m_pending = PendingWork::MapReturned;
+        return true;
+    }
     if (msg == AsstMsg::SubTaskCompleted && task == "BlackFlow@Roguelike@RecoverMapFailed") {
         m_pending = PendingWork::RecoverMapFailed;
         m_pending_details = details;
@@ -113,6 +117,23 @@ bool BlackFlowNodeTaskPlugin::_run()
                 << (shopping ? shopping->get().id : "default") << "buy table" << status.shopping_buy_table
                 << "sell table" << status.shopping_sell_table;
         report_outputs();
+        return true;
+    }
+
+    if (work == PendingWork::MapReturned) {
+        const auto& page = m_session->page_context();
+        if (page.has_value() && page->stage == PageExecutionStage::Running) {
+            // 保留派发时绑定的收尾任务，商店等页面有各自的完成事件。
+            return true;
+        }
+        std::string next_task = "BlackFlow@Roguelike@MapPrepare";
+        if (m_session->terminated()) {
+            next_task = "BlackFlow@Roguelike@StrategyTerminated-Enter";
+        }
+        else if (!m_session->current_floor().has_value()) {
+            next_task = "BlackFlow@Roguelike@NextLevel-Enter";
+        }
+        Task.set_task_base("BlackFlow@Roguelike@NodeCompletionAction", next_task);
         return true;
     }
 
